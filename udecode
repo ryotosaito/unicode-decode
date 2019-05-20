@@ -61,7 +61,7 @@ done
 shift $(($OPTIND - 1))
 
 # array which elements are two bytes hex string
-tbts=($(cat $1 | xxd -c1 | cut -f 2 -d " "))
+tbts=($(cat ${1+"$@"} | xxd -c1 | cut -f 2 -d " "))
 
 while [[ ${#tbts[@]} -gt 0 ]]
 do
