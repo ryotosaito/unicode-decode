@@ -10,8 +10,10 @@ Decode utf-8 (RFC3629) from all FILE(s) to standard output.
 
 With no FILE, or when FILE is -, read standard input.
 
-      --help     display this help and exit
-      --version  output version information and exit
+EOF
+	cat << EOF | column -ts^ | sed 's/^/  /'
+ ^--help^display this help and exit
+ ^--version^output version information and exit
 EOF
 }
 
