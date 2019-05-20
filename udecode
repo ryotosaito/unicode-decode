@@ -12,6 +12,7 @@ With no FILE, or when FILE is -, read standard input.
 
 EOF
 	cat << EOF | column -ts^ | sed 's/^/  /'
+-a,^--decode-all^decode even ascii character
  ^--help^display this help and exit
  ^--version^output version information and exit
 EOF
@@ -33,12 +34,19 @@ invalid_opt() {
 }
 
 OPT=
+DALL=0
 
-while getopts -- -: OPT
+while getopts a-: OPT
 do
 	case $OPT in
+		a)
+			DALL=1
+			;;
 		-)
 			case $OPTARG in
+				decode-all)
+					DALL=1
+					;;
 				help)
 					usage
 					exit
@@ -69,8 +77,12 @@ while [[ ${#tbts[@]} -gt 0 ]]
 do
 	if [[ $((0x${tbts[0]}>>7)) -eq 0 ]]
 	then
-		#echo -n \\u${tbts[0]}
-		echo -en \\u${tbts[0]}
+		if [[ $DALL -eq 0 ]]
+		then
+			echo -en \\u$( printf "%04x" $(( 0x${tbts[0]})) )
+		else
+			echo -n \\u$( printf "%04x" $(( 0x${tbts[0]})) )
+		fi
 		tbts=(${tbts[@]:1})
 	elif [[ $((0x${tbts[0]}>>5)) -eq 6 ]]
 	then
