@@ -1,5 +1,63 @@
 #!/usr/bin/env bash
 
+usage() {
+	cat << EOF
+Usage: udecode [FILE]...
+  or:  udecode OPTION
+Decode utf-8 (RFC3629) from all FILE(s) to standard output.
+
+With no FILE, or when FILE is -, read standard input.
+
+      --help     display this help and exit
+      --version  output version information and exit
+EOF
+}
+
+version() {
+	cat << EOF
+udecode 0.0-alpha
+Copyright (c) 2019 Ryoto Saito
+
+This work is licensed under the terms of the MIT license.
+For a copy, see <https://opensource.org/licenses/MIT>.
+EOF
+}
+
+invalid_opt() {
+	echo Invalid option: ${1+--$1} >&2
+	usage
+}
+
+OPT=
+
+while getopts -- -: OPT
+do
+	case $OPT in
+		-)
+			case $OPTARG in
+				help)
+					usage
+					exit
+					;;
+				version)
+					version
+					exit
+					;;
+				*)
+					invalid_opt $OPTARG
+					exit
+					;;
+			esac
+			;;
+		\?)
+			# getopt prints error instead.
+			usage
+			exit
+			;;
+	esac
+done
+shift $(($OPTIND - 1))
+
 # array which elements are two bytes hex string
 tbts=($(cat $1 | xxd -c1 | cut -f 2 -d " "))
 
