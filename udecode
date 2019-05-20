@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # array which elements are two bytes hex string
-tbts=($(echo -n $1 | xxd -c1 | cut -f 2 -d " "))
+tbts=($(cat $1 | xxd -c1 | cut -f 2 -d " "))
 
 while [[ ${#tbts[@]} -gt 0 ]]
 do
@@ -27,4 +27,3 @@ do
 		exit 1
 	fi
 done
-echo
