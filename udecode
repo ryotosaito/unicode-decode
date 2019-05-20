@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# array which elements are two bytes hex string
+tbts=($(echo -n $1 | xxd -c1 | cut -f 2 -d " "))
+
+while [[ ${#tbts[@]} -gt 0 ]]
+do
+	if [[ $((0x${tbts[0]}>>7)) -eq 0 ]]
+	then
+		#echo -n \\u${tbts[0]}
+		echo -en \\u${tbts[0]}
+		tbts=(${tbts[@]:1})
+	elif [[ $((0x${tbts[0]}>>5)) -eq 6 ]]
+	then
+		echo -n \\u$( printf "%04x" $(( (0x${tbts[0]}&31)<<6|(0x${tbts[1]}&63) )) )
+		tbts=(${tbts[@]:2})
+	elif [[ $((0x${tbts[0]}>>4)) -eq 14 ]]
+	then
+		echo -n \\u$( printf "%04x" $(( ((0x${tbts[0]}&15)<<6|(0x${tbts[1]}&63))<<6|(0x${tbts[2]}&63) )) )
+		tbts=(${tbts[@]:3})
+	elif [[ $((0x${tbts[0]}>>3)) -eq 30 ]]
+	then
+		echo -n \\U$( printf "%08x" $(( (((0x${tbts[0]}&7)<<6|(0x${tbts[1]}&63))<<6|(0x${tbts[2]}&63))<<6|(0x${tbts[3]}&63) )) )
+		tbts=(${tbts[@]:4})
+	else
+		echo "Convert Error" >&2
+		exit 1
+	fi
+done
+echo
