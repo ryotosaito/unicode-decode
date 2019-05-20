@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -Ceu
+
 usage() {
 	cat << EOF
 Usage: udecode [FILE]...
